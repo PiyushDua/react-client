@@ -1,6 +1,7 @@
 const style = {
   base: {
-    width: '98%',
+    width: '97%',
+    height: '15px',
     padding: '10px',
     fontWeight: 'light',
     fontSize: '12px',
