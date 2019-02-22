@@ -4,6 +4,11 @@ const style = {
     height: '40px',
     borderRadius: '4px',
   },
+  error: {
+    color: 'red',
+    fontWeight: 'light',
+    borderColor: 'red',
+  },
 };
 
 export default style;
