@@ -32,15 +32,6 @@ export default () => (
           )
         }
       </Math>
-      <Math first={3} second={4} operator="*">
-        {
-          ({ first, second, result }) => (
-            <Typography variant="h6">
-              {`Product of ${first} and ${second} is ${result}`}
-            </Typography>
-          )
-        }
-      </Math>
     </div>
   </>
 );
