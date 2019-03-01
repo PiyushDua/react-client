@@ -40,7 +40,7 @@ function NavBar(props) {
           <Typography variant="h6" color="inherit" className={classes.grow}>
             Trainee Portal
           </Typography>
-          <Link to="/" component={RouterLink} color="inherit" underline="none">
+          <Link to="/trainee" component={RouterLink} color="inherit" underline="none">
             <Button className={classes.button}>TRAINEE</Button>
           </Link>
           <Link to="/text-field-demo" component={RouterLink} color="inherit" underline="none">
