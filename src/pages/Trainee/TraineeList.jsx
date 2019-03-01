@@ -4,7 +4,9 @@ import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { AddDialog } from './components';
+import { TableData } from '../../components';
 import trainees from './data/trainee';
+import columns from './data/columns';
 
 const styles = theme => ({
   button: {
@@ -37,20 +39,23 @@ class TraineeList extends Component {
     const { classes } = this.props;
     return (
       <>
-        <Button
-          className={classes.button}
-          variant="outlined"
-          onClick={this.handleClickOpen}
-          color="primary"
-          size="small"
-        >
-          ADD TRAINEE
-        </Button>
-        <AddDialog
-          open={open}
-          onSubmit={this.handleTrainee}
-          onClose={this.handleClose}
-        />
+        <div align="right">
+          <Button
+            className={classes.button}
+            variant="outlined"
+            onClick={this.handleClickOpen}
+            color="primary"
+            size="small"
+          >
+            ADD TRAINEE
+          </Button>
+          <AddDialog
+            open={open}
+            onSubmit={this.handleTrainee}
+            onClose={this.handleClose}
+          />
+        </div>
+        <TableData data={trainees} column={columns} />
         <div>
           <ul>
             {
