@@ -23,7 +23,7 @@ const App = () => (
           <PrivateRoute exact path="/text-field-demo" component={TextFieldDemo} />
           <PrivateRoute exact path="/input-demo" component={InputDemo} />
           <PrivateRoute exact path="/children-demo" component={ChildrenDemo} />
-          <PrivateRoute exact path="/" component={Trainee} />
+          <PrivateRoute path="/trainee" component={Trainee} />
           <PrivateRoute component={NoMatch} />
         </Switch>
       </Router>
