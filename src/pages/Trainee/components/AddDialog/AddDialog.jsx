@@ -16,12 +16,17 @@ import { withStyles } from '@material-ui/core/styles';
 import PasswordIcon from '@material-ui/icons/VisibilityOff';
 import Person from '@material-ui/icons/Person';
 import Email from '@material-ui/icons/Email';
+import callApi from '../../../../libs/utils/api';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { SnackBarConsumer } from '../../../../contexts/SnackBarProvider/SnackBarProvider';
 
 const styles = theme => ({
   header: {
     padding: theme.spacing.unit * 2,
   },
+  spinner: {
+    position: 'absolute',
+  }
 });
 
 const Schema = yup.object({
@@ -50,6 +55,7 @@ class AddDialog extends Component {
     email: '',
     password: '',
     confirmPassword: '',
+    loading: false,
   };
 
   handleChange = field => (event) => {
@@ -132,6 +138,20 @@ class AddDialog extends Component {
     });
   }
 
+  handleApi = async (openSnackbar) => {
+    this.setState({
+      loading: true,
+    })
+    const { name, email, password } = this.state;
+    const data = { name, email, password };
+    const token = await callApi('post', '/trainee', data);
+    if (token.data) {
+      this.setState({
+        loading: false,
+      }, () => { this.handleSubmit(); openSnackbar(token.data.message, 'success') })
+    }
+  }
+
   render() {
     const {
       open,
@@ -144,6 +164,7 @@ class AddDialog extends Component {
       name,
       password,
       confirmPassword,
+      loading,
     } = this.state;
 
     return (
@@ -241,11 +262,12 @@ class AddDialog extends Component {
           <SnackBarConsumer>
             {({ openSnackbar }) => (
               <Button
-                onClick={() => { this.handleSubmit(); openSnackbar('Trainee Successfully Created', 'success'); }}
+                onClick={() => this.handleApi(openSnackbar)}
                 color="primary"
                 variant="contained"
-                disabled={this.hasErrors() || !this.isTouched()}
+                disabled={this.hasErrors() || !this.isTouched() || loading}
               >
+              {loading && <CircularProgress size={24} className={classes.spinner} />}
                 Submit
               </Button>
             )}
