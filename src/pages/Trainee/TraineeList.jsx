@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
 import PropTypes from 'prop-types';
 import * as moment from 'moment';
-import { AddDialog } from './components';
+import { AddDialog, RemoveDialog, EditDialog } from './components';
 import { TableData } from '../../components';
 import trainees from './data/trainee';
 
@@ -18,8 +20,15 @@ const styles = theme => ({
 class TraineeList extends Component {
   state = {
     open: false,
+    edit: false,
+    remove: false,
     order: 'asc',
     orderBy: '',
+    rowsPerPage: 10,
+    page: 0,
+    data: '',
+    name: '',
+    email: '',
   };
 
   handleClickOpen = () => {
@@ -59,8 +68,52 @@ class TraineeList extends Component {
     this.setState({ order: newOrder, orderBy: newOrderBy });
   };
 
+  handleChangePage = (event, page) => {
+    this.setState({ page });
+  };
+
+  handleEditDialogOpen = (event, record) => {
+    event.stopPropagation();
+    const { name, email } = record;
+    this.setState({ name, email, edit: true });
+  };
+
+  handleEditClose = () => {
+    this.setState({ edit: false });
+  };
+
+  handleEditSubmit = (data) => {
+    console.log('Edited Item ', data);
+    this.setState({ edit: false });
+  }
+
+  handleRemoveDialogOpen = (event, record) => {
+    event.stopPropagation();
+    this.setState({ data: record, remove: true });
+  };
+
+  handleRemoveClose = () => {
+    this.setState({ remove: false });
+  };
+
+  handleRemoveSubmit = (data) => {
+    console.log('Deleted Item ', data);
+    this.setState({ remove: false });
+  }
+
   render() {
-    const { open, order, orderBy } = this.state;
+    const {
+      open,
+      edit,
+      remove,
+      order,
+      data,
+      orderBy,
+      rowsPerPage,
+      page,
+      name,
+      email,
+    } = this.state;
     const { classes } = this.props;
     return (
       <>
@@ -96,7 +149,7 @@ class TraineeList extends Component {
             {
               field: 'createdAt',
               label: 'Date',
-              align: 'right',
+              align: 'center',
               format: this.getFormattedDate,
             },
           ]}
@@ -104,6 +157,34 @@ class TraineeList extends Component {
           order={order}
           onSort={this.handleSort}
           onSelect={this.handleSelect}
+          count={100}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          actions={[
+            {
+              icon: <EditIcon />,
+              handler: this.handleEditDialogOpen,
+            },
+            {
+              icon: <DeleteIcon />,
+              handler: this.handleRemoveDialogOpen,
+            },
+          ]}
+          onChangePage={this.handleChangePage}
+        />
+        <EditDialog
+          open={edit}
+          data={data}
+          onSubmit={this.handleEditSubmit}
+          onClose={this.handleEditClose}
+          Name={name}
+          Email={email}
+        />
+        <RemoveDialog
+          open={remove}
+          data={data}
+          onSubmit={this.handleRemoveSubmit}
+          onClose={this.handleRemoveClose}
         />
       </>
     );
