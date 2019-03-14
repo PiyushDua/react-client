@@ -51,7 +51,9 @@ class TraineeList extends Component {
 
   handleTrainee = record => {
     console.log("Details are - ", record);
-    this.setState({ open: false });
+    this.setState({
+      open: false
+    }, () => this.handleReload());
   };
 
   getFormattedDate = date => {
@@ -90,18 +92,18 @@ class TraineeList extends Component {
       page,
       skip: newSkip,
       limit: newLimit,
-      loading: true
+      loading: true,
     });
     callApi("get", `/trainee?limit=${newLimit}&skip=${newSkip}`).then(
       details => {
         if (details.status) {
           this.setState({
             traineeRecords: details.data.data.records,
-            loading: false
+            loading: false,
           });
         } else {
           this.setState({
-            loading: false
+            loading: false,
           });
         }
       }
@@ -111,7 +113,7 @@ class TraineeList extends Component {
   handleEditDialogOpen = (event, record) => {
     event.stopPropagation();
     const { name, email } = record;
-    this.setState({ name, email, edit: true });
+    this.setState({ name, email, edit: true, data: record });
   };
 
   handleEditClose = () => {
@@ -120,8 +122,30 @@ class TraineeList extends Component {
 
   handleEditSubmit = data => {
     console.log("Edited Item ", data);
-    this.setState({ edit: false });
+    this.setState({
+      edit: false
+    }, () => this.handleReload());
   };
+
+  handleReload = async () => {
+    this.setState({
+      loading: true,
+    });
+    const { skip, limit } = this.state;
+    const updatedRecord = await callApi('get', `/trainee?limit=${limit}&skip=${skip}`);
+    const { page } = this.state;
+    if (updatedRecord.data) {
+      this.setState({
+        loading: false,
+        page: (updatedRecord.data.data.count > 0) ? page : page-1,
+        traineeRecords: updatedRecord.data.data.records,
+      })
+    } else {
+      this.setState({
+        loading: false,
+      });
+  }
+}
 
   handleRemoveDialogOpen = (event, record) => {
     event.stopPropagation();
@@ -134,21 +158,25 @@ class TraineeList extends Component {
 
   handleRemoveSubmit = data => {
     console.log("Deleted Item ", data);
-    this.setState({ remove: false });
+    this.setState({
+      remove: false
+    }, () => this.handleReload());
   };
 
   componentDidMount() {
-    this.setState({ loading: true });
     const { skip, limit } = this.state;
+    this.setState({
+      loading: true,
+    });
     callApi("get", `/trainee?limit=${limit}&skip=${skip}`).then(details => {
       if (details.status) {
         this.setState({
           traineeRecords: details.data.data.records,
-          loading: false
+          loading: false,
         });
       } else {
         this.setState({
-          loading: false
+          loading: false,
         });
       }
     });
@@ -250,8 +278,7 @@ class TraineeList extends Component {
 
 TraineeList.propTypes = {
   classes: PropTypes.objectOf(PropTypes.string).isRequired,
-  match: PropTypes.shape({ url: PropTypes.string, path: PropTypes.string })
-    .isRequired,
+  match: PropTypes.shape({ url: PropTypes.string, path: PropTypes.string }).isRequired,
   history: PropTypes.objectOf(PropTypes.string).isRequired
 };
 

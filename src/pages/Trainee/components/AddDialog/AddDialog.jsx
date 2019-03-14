@@ -13,10 +13,12 @@ import {
   Grid,
 } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import PasswordIcon from '@material-ui/icons/VisibilityOff';
 import Person from '@material-ui/icons/Person';
 import Email from '@material-ui/icons/Email';
 import callApi from '../../../../libs/utils/api';
+import IconButton from '@material-ui/core/IconButton';
+import Visibility from '@material-ui/icons/Visibility';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { SnackBarConsumer } from '../../../../contexts/SnackBarProvider/SnackBarProvider';
 
@@ -56,6 +58,8 @@ class AddDialog extends Component {
     password: '',
     confirmPassword: '',
     loading: false,
+    showPassword: false,
+    showConfirmPassword: false,
   };
 
   handleChange = field => (event) => {
@@ -136,6 +140,14 @@ class AddDialog extends Component {
       email,
       password,
     });
+    this.setState({
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      showPassword: false,
+      showConfirmPassword: false,
+    });
   }
 
   handleApi = async (openSnackbar) => {
@@ -149,8 +161,39 @@ class AddDialog extends Component {
       this.setState({
         loading: false,
       }, () => { this.handleSubmit(); openSnackbar(token.data.message, 'success') })
+    } else {
+      this.setState({
+        loading: false,
+      }, () => { openSnackbar(token, 'error') })
     }
   }
+
+  handleClose = () => {
+    this.setState({
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      errors: '',
+      isTouched: '',
+      showPassword: false,
+      showConfirmPassword: false,
+    })
+  }
+
+  visibilityShow = () => {
+    const { showPassword } = this.state;
+    this.setState({
+      showPassword: !showPassword,
+    });
+  };
+
+  visibilityShowConfirm = () => {
+    const { showConfirmPassword } = this.state;
+    this.setState({
+      showConfirmPassword: !showConfirmPassword,
+    });
+  };
 
   render() {
     const {
@@ -164,7 +207,9 @@ class AddDialog extends Component {
       name,
       password,
       confirmPassword,
+      showConfirmPassword,
       loading,
+      showPassword,
     } = this.state;
 
     return (
@@ -218,7 +263,7 @@ class AddDialog extends Component {
                 <TextField
                   variant="outlined"
                   label="Password"
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   value={password}
                   fullWidth
                   onChange={this.handleChange('password')}
@@ -228,7 +273,11 @@ class AddDialog extends Component {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <PasswordIcon />
+                        <IconButton onClick={this.visibilityShow}>
+                        {
+                          showPassword ? <Visibility /> : <VisibilityOff />
+                        }
+                        </IconButton>
                       </InputAdornment>
                     ),
                   }}
@@ -238,7 +287,7 @@ class AddDialog extends Component {
                 <TextField
                   variant="outlined"
                   label="Confirm Password"
-                  type="password"
+                  type={showConfirmPassword ? 'text' : 'password'}
                   value={confirmPassword}
                   fullWidth
                   onChange={this.handleChange('confirmPassword')}
@@ -248,7 +297,11 @@ class AddDialog extends Component {
                   InputProps={{
                     startAdornment: (
                       <InputAdornment position="start">
-                        <PasswordIcon />
+                        <IconButton onClick={this.visibilityShowConfirm}>
+                        {
+                          showConfirmPassword ? <Visibility /> : <VisibilityOff />
+                        }
+                        </IconButton>
                       </InputAdornment>
                     ),
                   }}
@@ -258,7 +311,7 @@ class AddDialog extends Component {
           </div>
         </DialogContent>
         <DialogActions>
-          <Button onClick={onClose} color="primary">Cancel</Button>
+          <Button onClick={() => {onClose(); this.handleClose()}} color="primary">Cancel</Button>
           <SnackBarConsumer>
             {({ openSnackbar }) => (
               <Button
