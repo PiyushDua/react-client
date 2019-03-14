@@ -10,6 +10,7 @@ import TablePagination from '@material-ui/core/TablePagination';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import { withLoaderAndMessage } from '../HOC';
 
 const CustomTableCell = withStyles(theme => ({
   head: {
@@ -91,7 +92,7 @@ class TableData extends Component {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.map(trainee => (
+            {data.map((trainee) => (
               <TableRow
                 className={classes.strip}
                 key={trainee.id}
@@ -159,4 +160,4 @@ TableData.defaultProps = {
   actions: null,
 };
 
-export default withStyles(styles)(TableData);
+export default withStyles(styles)(withLoaderAndMessage(TableData));
