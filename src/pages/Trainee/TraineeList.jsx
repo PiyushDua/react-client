@@ -2,11 +2,10 @@ import React, { Component } from 'react';
 import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import * as moment from 'moment';
 import { AddDialog } from './components';
 import { TableData } from '../../components';
 import trainees from './data/trainee';
-import columns from './data/columns';
 
 const styles = theme => ({
   button: {
@@ -19,6 +18,8 @@ const styles = theme => ({
 class TraineeList extends Component {
   state = {
     open: false,
+    order: 'asc',
+    orderBy: '',
   };
 
   handleClickOpen = () => {
@@ -34,8 +35,32 @@ class TraineeList extends Component {
     this.setState({ open: false });
   };
 
+  getFormattedDate = (date) => {
+    moment.defaultFormat = 'dddd, MMMM Do YYYY, h:mm:ss a';
+    return (moment(moment.utc(date).toDate().toString()).format(moment.defaultFormat));
+  }
+
+  handleSelect = (event, id) => {
+    const { history } = this.props;
+    return (history.push(`/trainee/${id}`));
+  };
+
+  handleSort = (event, property) => {
+    this.createSortHandler(event, property);
+  };
+
+  createSortHandler = (event, property) => {
+    const newOrderBy = property;
+    let newOrder = 'desc';
+    const { order, orderBy } = this.state;
+    if (orderBy === property && order === 'desc') {
+      newOrder = 'asc';
+    }
+    this.setState({ order: newOrder, orderBy: newOrderBy });
+  };
+
   render() {
-    const { open } = this.state;
+    const { open, order, orderBy } = this.state;
     const { classes } = this.props;
     return (
       <>
@@ -47,7 +72,7 @@ class TraineeList extends Component {
             color="primary"
             size="small"
           >
-            ADD TRAINEE
+            ADD TRAINEE LIST
           </Button>
           <AddDialog
             open={open}
@@ -55,18 +80,31 @@ class TraineeList extends Component {
             onClose={this.handleClose}
           />
         </div>
-        <TableData data={trainees} column={columns} />
-        <div>
-          <ul>
+        <TableData
+          data={trainees}
+          column={[
             {
-              trainees.map(trainee => (
-                <li>
-                  <Link to={`/trainee/${trainee.id}`}>{trainee.name}</Link>
-                </li>
-              ))
-            }
-          </ul>
-        </div>
+              field: 'name',
+              label: 'Name',
+              align: 'center',
+            },
+            {
+              field: 'email',
+              label: 'Email Address',
+              format: value => value && value.toUpperCase(),
+            },
+            {
+              field: 'createdAt',
+              label: 'Date',
+              align: 'right',
+              format: this.getFormattedDate,
+            },
+          ]}
+          orderBy={orderBy}
+          order={order}
+          onSort={this.handleSort}
+          onSelect={this.handleSelect}
+        />
       </>
     );
   }
@@ -74,6 +112,7 @@ class TraineeList extends Component {
 TraineeList.propTypes = {
   classes: PropTypes.objectOf(PropTypes.string).isRequired,
   match: PropTypes.shape({ url: PropTypes.string, path: PropTypes.string }).isRequired,
+  history: PropTypes.objectOf(PropTypes.string).isRequired,
 };
 
 export default withStyles(styles)(TraineeList);
