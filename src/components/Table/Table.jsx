@@ -44,9 +44,8 @@ const styles = theme => ({
     fontSize: 10,
   },
   button: {
-    display: 'flex',
     color: theme.palette.background.primary,
-    marginRight: theme.spacing.unit * 12,
+    marginRight: theme.spacing.unit * 4,
   },
 });
 class TableData extends Component {

@@ -5,7 +5,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import PropTypes from 'prop-types';
 import * as moment from 'moment';
-import { AddDialog, RemoveDialog, EditDialog } from './components';
+import { AddDialog, EditDialog, RemoveDialog } from './components';
 import { TableData } from '../../components';
 import trainees from './data/trainee';
 

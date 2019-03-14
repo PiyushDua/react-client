@@ -9,6 +9,7 @@ import {
 } from '@material-ui/core';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
+import { SnackBarConsumer } from '../../../../contexts/SnackBarProvider/SnackBarProvider';
 
 const styles = theme => ({
   textField: {
@@ -30,30 +31,46 @@ const RemoveDialog = (props) => {
     ...other
   } = props;
 
+  const Date = '2019-02-14T18:15:11.778Z';
+
   return (
-    <>
-      <Dialog
-        {...other}
-        fullWidth
-        maxWidth="md"
-        onClose={onClose}
-      >
-        <DialogTitle>Remove Trainee</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Do you really want to remove this trainee?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button variant="contained" onClick={() => onClose()} color="default">
-            Cancel
-          </Button>
-          <Button variant="contained" onClick={() => onSubmit(data)} color="primary" autoFocus>
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </>
+    <SnackBarConsumer>
+      {({ openSnackbar }) => (
+        <Dialog
+          {...other}
+          fullWidth
+          maxWidth="md"
+          onClose={onClose}
+        >
+          <DialogTitle>Remove Trainee</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Do you really want to remove this trainee?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button variant="contained" onClick={() => onClose()} color="default">
+              Cancel
+            </Button>
+            <Button
+              variant="contained"
+              onClick={() => {
+                if (data.createdAt < Date) {
+                  openSnackbar('Trainee can not be Deleted', 'error');
+                } else {
+                  onSubmit(data);
+                  openSnackbar('Trainee Successfully Deleted', 'success');
+                }
+              }}
+              color="primary"
+              autoFocus
+            >
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
+    </SnackBarConsumer>
   );
 };
 
@@ -67,7 +84,7 @@ const propTypes = {
 
 const defaultProps = {
   open: false,
-  onSubmit: () => {},
+  onSubmit: () => { },
 };
 
 RemoveDialog.propTypes = propTypes;
