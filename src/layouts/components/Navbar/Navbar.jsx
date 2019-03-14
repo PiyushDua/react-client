@@ -30,6 +30,10 @@ const styles = {
   },
 };
 
+function handleClearToken() {
+  localStorage.removeItem('token');
+}
+
 function NavBar(props) {
   const { classes } = props;
   return (
@@ -52,7 +56,9 @@ function NavBar(props) {
           <Link to="/children-demo" component={RouterLink} color="inherit" underline="none">
             <Button className={classes.button}>CHILDREN DEMO</Button>
           </Link>
-          <Button className={classes.logout}>LOGOUT</Button>
+          <Link to="/login" component={RouterLink} color="inherit" underline="none">
+            <Button onClick= {handleClearToken} className={classes.logout}>LOGOUT</Button>
+          </Link>
         </Toolbar>
       </AppBar>
     </div>

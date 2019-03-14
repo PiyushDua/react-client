@@ -21,7 +21,7 @@ const App = () => (
         <CssBaseline />
         <Router>
           <Switch>
-            <AuthRoute exact path="/login" component={Login} />
+            <AuthRoute exact path="/Login" component={Login} />
             <PrivateRoute exact path="/text-field-demo" component={TextFieldDemo} />
             <PrivateRoute exact path="/input-demo" component={InputDemo} />
             <PrivateRoute exact path="/children-demo" component={ChildrenDemo} />
